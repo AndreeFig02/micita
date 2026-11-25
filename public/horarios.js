@@ -13,8 +13,8 @@ async function cargar() {
     cont.innerHTML = ORDEN.map(n => {
       const x = datos.find(d => Number(d.dia) === n) || { activo: 0, desde: '09:00', hasta: '18:00' };
       return `
-        <div class="card fila-dia" data-dia="${n}">
-          <label class="chk"><input type="checkbox" class="activo" ${Number(x.activo) ? 'checked' : ''}> ${NOMBRES[n]}</label>
+        <div class="card fila-dia${Number(x.activo) ? '' : ' inactivo'}" data-dia="${n}">
+          <label class="chk"><input type="checkbox" class="activo switch" ${Number(x.activo) ? 'checked' : ''}> ${NOMBRES[n]}</label>
           <div class="rangos">
             <div class="rango">
               <small>Turno 1</small>
@@ -31,6 +31,7 @@ async function cargar() {
           </div>
         </div>`;
     }).join('');
+    cont.querySelectorAll('.activo').forEach(c => c.addEventListener('change', () => c.closest('.fila-dia').classList.toggle('inactivo', !c.checked)));
   } catch (e) {
     cont.innerHTML = '<p>No se pudieron cargar los horarios.</p>';
   }
@@ -51,12 +52,24 @@ document.getElementById('btnGuardar').addEventListener('click', async () => {
       body: JSON.stringify({ dias, local_id: usuario.local_id })
     });
     const d = await r.json();
-    msg.style.color = d.ok ? '#1e8e5a' : '';
-    msg.textContent = d.ok ? '¡Horarios guardados!' : d.error;
+    msg.textContent = '';
+    toast(d.ok ? '¡Horarios guardados!' : d.error, d.ok ? 'ok' : 'error');
   } catch (e) {
-    msg.style.color = '';
-    msg.textContent = 'No se pudo conectar con el servidor';
+    toast('No se pudo conectar con el servidor', 'error');
   }
+});
+
+document.getElementById('btnCopiar').addEventListener('click', () => {
+  const lunes = document.querySelector('.fila-dia[data-dia="1"]');
+  document.querySelectorAll('.fila-dia').forEach(f => {
+    if (f === lunes) return;
+    ['activo', 'desde', 'hasta', 'desde2', 'hasta2'].forEach(c => {
+      const o = lunes.querySelector('.' + c), d = f.querySelector('.' + c);
+      if (c === 'activo') d.checked = o.checked; else d.value = o.value;
+    });
+    f.classList.toggle('inactivo', !lunes.querySelector('.activo').checked);
+  });
+  toast('Horario del lunes copiado. Falta guardar.');
 });
 
 cargar();

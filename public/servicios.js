@@ -6,6 +6,7 @@ if (esAdmin) document.getElementById('admin').style.display = 'block';
 
 let servicios = [];
 let editandoId = null;
+let catAbierta = null; // categoría desplegada (se mantiene al recargar la lista)
 
 const sNombre = document.getElementById('sNombre');
 const sCategoria = document.getElementById('sCategoria');
@@ -33,8 +34,55 @@ sCategoria.addEventListener('change', () => {
   if (sCategoria.value === 'otro') sCategoriaOtro.focus();
 });
 
+function formatoDuracion(min) {
+  const h = Math.floor(min / 60);
+  const m = min % 60;
+  return h ? `${h} h${m ? ' ' + m + ' min' : ''}` : `${m} min`;
+}
+
+const SVG_RELOJ = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>';
+
+const SVG_EDITAR = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>';
+const SVG_BORRAR = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg>';
+
+function precioCorto(n) {
+  return '$' + Number(n).toLocaleString('es-AR');
+}
+
+function tarjetaServicio(s) {
+  return `
+    <div class="card servicio">
+      <div class="servicio-fila">
+        <div class="servicio-info">
+          <h3>${esc(s.nombre)}</h3>
+          <small class="servicio-dur">${SVG_RELOJ} ${formatoDuracion(s.duracion_min)}</small>
+        </div>
+        <div class="servicio-lado">
+          <span class="servicio-precio">${precioCorto(s.precio)}</span>
+          ${esAdmin ? `
+            <div class="servicio-acc">
+              <button class="btn-icono ic-editar" onclick="editar(${s.id})" title="Editar" aria-label="Editar ${esc(s.nombre)}">${SVG_EDITAR}</button>
+              <button class="btn-icono ic-borrar" onclick="borrar(${s.id})" title="Eliminar" aria-label="Eliminar ${esc(s.nombre)}">${SVG_BORRAR}</button>
+            </div>` : `
+            <button class="btn-reservar" onclick="reservar(${s.id})">Reservar</button>`}
+        </div>
+      </div>
+    </div>`;
+}
+
+// Lleva a la pantalla de turnos con este servicio ya elegido
+function reservar(id) {
+  location.href = `turnos.html?servicio=${encodeURIComponent(id)}`;
+}
+
+function fijarBloque(bloque, abrir) {
+  bloque.classList.toggle('abierto', abrir);
+  bloque.querySelector('.bloque-cab').setAttribute('aria-expanded', abrir);
+}
+
 async function cargar() {
   const lista = document.getElementById('lista');
+  if (!lista.children.length) lista.innerHTML = skeleton(3);
   try {
     const r = await fetch(`${API}/servicios.php?local_id=${usuario.local_id}`);
     servicios = await r.json();
@@ -43,26 +91,54 @@ async function cargar() {
       lista.innerHTML = '<p>Este local todavía no cargó sus servicios.</p>';
       return;
     }
-    let catActual = '';
 
+    // Agrupar por categoría (un bloque por categoría)
+    const grupos = {};
     servicios.forEach(s => {
-      if (s.categoria !== catActual) {
-        catActual = s.categoria;
-        lista.insertAdjacentHTML('beforeend', `<h2 class="cat">${esc(nombreCategoria(catActual))}</h2>`);
-      }
-      const h = Math.floor(s.duracion_min / 60);
-      const m = s.duracion_min % 60;
-      const duracion = h ? `${h} h${m ? ' ' + m + ' min' : ''}` : `${m} min`;
-      lista.insertAdjacentHTML('beforeend', `
-        <div class="card">
-          <h3>${esc(s.nombre)}</h3>
-          <small>${duracion} · $${Number(s.precio).toLocaleString('es-AR')}</small>
-          ${esAdmin ? `
-            <div class="acciones">
-              <button class="editar" onclick="editar(${s.id})">Editar</button>
-              <button class="borrar" onclick="borrar(${s.id})">Eliminar</button>
-            </div>` : ''}
-        </div>`);
+      (grupos[s.categoria] = grupos[s.categoria] || []).push(s);
+    });
+
+    Object.keys(grupos).forEach(cat => {
+      const items = grupos[cat];
+      const n = items.length;
+      const precios = items.map(s => Number(s.precio));
+      const pMin = Math.min(...precios);
+      const pMax = Math.max(...precios);
+      const textoPrecio = pMin === pMax ? precioCorto(pMin) : `desde ${precioCorto(pMin)}`;
+
+      const bloque = document.createElement('div');
+      bloque.className = 'bloque';
+      bloque.innerHTML = `
+        <div class="bloque-cab" role="button" tabindex="0" aria-expanded="false">
+          <span class="bloque-icono">${iconoCategoria(cat)}</span>
+          <span class="bloque-titulo">
+            ${esc(nombreCategoria(cat))}
+            <span class="bloque-cant">${n} servicio${n === 1 ? '' : 's'} · ${textoPrecio}</span>
+          </span>
+        </div>
+        <div class="bloque-cuerpo">
+          <div class="bloque-lista">
+            <div class="bloque-interior">
+              ${items.map(tarjetaServicio).join('')}
+            </div>
+          </div>
+        </div>`;
+
+      const cab = bloque.querySelector('.bloque-cab');
+      const alternar = () => {
+        const abrir = !bloque.classList.contains('abierto');
+        // Solo un bloque abierto a la vez
+        lista.querySelectorAll('.bloque.abierto').forEach(o => fijarBloque(o, false));
+        fijarBloque(bloque, abrir);
+        catAbierta = abrir ? cat : null;
+      };
+      cab.addEventListener('click', alternar);
+      cab.addEventListener('keydown', e => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); alternar(); }
+      });
+
+      lista.appendChild(bloque);
+      if (cat === catAbierta) fijarBloque(bloque, true);
     });
   } catch (e) {
     lista.innerHTML = '<p>No se pudieron cargar los servicios.</p>';
@@ -132,6 +208,7 @@ btnAgregar.addEventListener('click', async () => {
       await fetch(API + '/servicios.php', { method: 'POST', body: JSON.stringify(datos) });
     }
     msg.textContent = '';
+    toast('Servicio guardado', 'ok');
     limpiarForm();
     cargar();
   } catch (e) {
@@ -140,7 +217,7 @@ btnAgregar.addEventListener('click', async () => {
 });
 
 async function borrar(id) {
-  if (!confirm('¿Eliminar este servicio?')) return;
+  if (!await confirmar('¿Eliminar este servicio?', 'Eliminar')) return;
   await fetch(API + '/servicios.php', { method: 'DELETE', body: JSON.stringify({ id, local_id: usuario.local_id }) });
   if (editandoId === id) limpiarForm();
   cargar();

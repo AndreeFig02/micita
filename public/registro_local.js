@@ -1,31 +1,22 @@
-document.getElementById('btnLocal').addEventListener('click', async () => {
-  const msg = document.getElementById('msg');
-  const datos = {
-    local: document.getElementById('local').value.trim(),
-    nombre: document.getElementById('nombre').value.trim(),
-    email: document.getElementById('email').value.trim(),
-    telefono: document.getElementById('telefono').value.trim(),
-    password: document.getElementById('password').value
-  };
+const OJO_ABIERTO = '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1.5 12S5.5 5 12 5s10.5 7 10.5 7-4 7-10.5 7S1.5 12 1.5 12z"/><circle cx="12" cy="12" r="3"/></svg>';
+const OJO_TACHADO = '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1.5 12S5.5 5 12 5s10.5 7 10.5 7-4 7-10.5 7S1.5 12 1.5 12z"/><circle cx="12" cy="12" r="3"/><line x1="3" y1="3" x2="21" y2="21"/></svg>';
 
-  let tel = datos.telefono.replace(/\D/g, '');
-  if (tel.startsWith('549')) tel = tel.slice(3);
-  if (!datos.local || !datos.nombre || !datos.email || datos.password.length < 6 || tel.length < 10) {
-    msg.textContent = 'Completá todos los campos (teléfono de 10 dígitos y contraseña de mínimo 6)';
-    return;
-  }
-  datos.telefono = '549' + tel;
+document.querySelectorAll('input[type="password"]').forEach(input => {
+  const envoltura = document.createElement('div');
+  envoltura.className = 'pass-wrap';
+  input.parentNode.insertBefore(envoltura, input);
+  envoltura.appendChild(input);
 
-  try {
-    const r = await fetch(API + '/registro_local.php', { method: 'POST', body: JSON.stringify(datos) });
-    const d = await r.json();
-    if (d.ok) {
-      alert('¡Local creado! El código para tus clientas es: ' + d.codigo + '\nLo vas a ver siempre en tu panel.');
-      location.href = 'index.html';
-    } else {
-      msg.textContent = d.error;
-    }
-  } catch (e) {
-    msg.textContent = 'No se pudo conectar con el servidor';
-  }
+  const ojo = document.createElement('button');
+  ojo.type = 'button';
+  ojo.className = 'ojo';
+  ojo.innerHTML = OJO_ABIERTO;
+  ojo.setAttribute('aria-label', 'Mostrar u ocultar contraseña');
+  envoltura.appendChild(ojo);
+
+  ojo.addEventListener('click', () => {
+    const oculto = input.type === 'password';
+    input.type = oculto ? 'text' : 'password';
+    ojo.innerHTML = oculto ? OJO_TACHADO : OJO_ABIERTO;
+  });
 });

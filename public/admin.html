@@ -2,26 +2,31 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>MiCita - Panel</title>
+  <meta name="theme-color" content="#0b6e70">
   <link rel="stylesheet" href="estilos.css">
 </head>
+
 <body>
   <main class="caja">
     <h1>Panel de turnos</h1>
-    <p id="saludo"><p></p>
+    <p id="saludo"></p>
     <p id="msg"></p>
 
     <h2 class="cat">Turnos agendados</h2>
+    <div class="filtros">
+      <button id="btnTodos" class="chip-filtro">Próximos</button>
+      <button id="btnHoy" class="chip-filtro">Hoy</button>
+      <button id="btnManana" class="chip-filtro">Mañana</button>
+    </div>
     <input id="fecha" type="date">
-    <button id="btnTodos" class="sec">Ver todos los próximos</button>
-    <button id="btnHoy" class="sec">Hoy</button>
-    <button id="btnManana" class="sec">Mañana</button>
     <div id="lista"></div>
 
     <button id="btnSalir">Cerrar sesión</button>
   </main>
   <script src="config.js"></script>
+  <script src="ui.js"></script>
   <script src="admin.js"></script>
   <script src="menu.js"></script>
 </body>

@@ -1,9 +1,20 @@
-document.getElementById('btnLogin').addEventListener('click', async () => {
+const form = document.getElementById('formLogin');
+const btn = document.getElementById('btnLogin');
+const msg = document.getElementById('msg');
+
+form.addEventListener('submit', async e => {
+  e.preventDefault();
   const email = document.getElementById('email').value.trim();
   const password = document.getElementById('password').value;
-  const msg = document.getElementById('msg');
+  msg.textContent = '';
 
-  if (!email || !password) { msg.textContent = 'Completá todos los campos'; return; }
+  if (!email || !password) {
+    msg.textContent = 'Completá tu email y tu contraseña';
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'Ingresando…';
 
   try {
     const r = await fetch(API + '/login.php', {
@@ -15,10 +26,13 @@ document.getElementById('btnLogin').addEventListener('click', async () => {
     if (d.ok) {
       localStorage.setItem('usuario', JSON.stringify(d.usuario));
       location.href = d.usuario.rol === 'admin' ? 'admin.html' : 'servicios.html';
-    } else {
-      msg.textContent = d.error;
+      return;
     }
-  } catch (e) {
-    msg.textContent = 'No se pudo conectar con el servidor';
+    msg.textContent = d.error;
+  } catch (err) {
+    msg.textContent = 'No se pudo conectar con el servidor. Revisá tu conexión.';
   }
+
+  btn.disabled = false;
+  btn.textContent = 'Ingresar';
 });

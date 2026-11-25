@@ -2,24 +2,55 @@
 <html lang="es">
   <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <title>MiCita - Iniciar Sesión</title>
+    <meta name="theme-color" content="#0f8b8d">
     <link rel="stylesheet" href="estilos.css">
   </head>
 
-  <body>
-    <main class="caja login">
-      <h1>MiCita</h1>
-      <p class="sub">Tus turnos, siempre a mano</p>
-      <input id="email" type="email" placeholder="Email">
-      <input id="password" type="password" placeholder="Contraseña">
-      <button id="btnLogin">Ingresar</button>
-     
-      <a href="registro.html">Crear cuenta nueva</a><br>
-      <a href="registro_local.html">Soy dueña/o de una estética: registrar mi local</a>
+  <body class="pantalla-login">
+    <main class="login-pagina">
+
+      <header class="login-cabecera">
+        <div class="login-logo">
+          <svg viewBox="0 0 24 24" width="42" height="42" fill="none" stroke="#0f8b8d" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="3" y="5" width="18" height="16" rx="3"/>
+            <path d="M8 3v4M16 3v4M3 10h18"/>
+            <path d="M12 12.5l1 2.5 2.5 1-2.5 1-1 2.5-1-2.5-2.5-1 2.5-1z" fill="#0f8b8d" stroke="none"/>
+          </svg>
+        </div>
+        <h1>MiCita</h1>
+      </header>
+
+      <form id="formLogin" class="login-hoja" novalidate>
+        <h2>Ingresá a tu cuenta</h2>
+
+        <div class="campo">
+          <svg class="campo-ic" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="m3 8 9 6 9-6"/></svg>
+          <input id="email" type="email" placeholder="Email" autocomplete="email" inputmode="email">
+        </div>
+
+        <div class="campo">
+          <svg class="campo-ic" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="3"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>
+          <input id="password" type="password" placeholder="Contraseña" autocomplete="current-password">
+        </div>
+
+        <p id="msg" role="alert"></p>
+        <button id="btnLogin" type="submit">Ingresar</button>
+
+        <p class="login-sep"><span>¿Todavía no tenés cuenta?</span></p>
+        <a class="btn-sec" href="registro.html">Crear cuenta</a>
+
+        <a class="link-dueno" href="registro_local.html">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10l1.5-5h13L20 10"/><path d="M4 10a2.7 2.7 0 0 0 5.3 0 2.7 2.7 0 0 0 5.4 0 2.7 2.7 0 0 0 5.3 0"/><path d="M5 12v8h14v-8"/></svg>
+          Soy dueña/o de una estética
+        </a>
+      </form>
+
     </main>
-    
+
     <script src="config.js"></script>
+    <script src="ui.js"></script>
     <script src="app.js"></script>
     <script src="verpass.js"></script>
   </body>
