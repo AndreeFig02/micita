@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>MiCita - Registro</title>
+    <link rel="stylesheet" href="estilos.css">
+  </head>
+
+  <body>
+    <main class="caja login">
+      <h1>Crear cuenta</h1>
+      <input id="codigo" placeholder="Código de tu estética (te lo da el local)">
+      <small id="nombreLocalReg"></small>
+      <input id="nombre" placeholder="Nombre y apellido">
+      <input id="email" type="email" placeholder="Email">
+      <input id="telefono" type="tel" placeholder="Teléfono (ej: 5493764123456)">
+      <input id="password" type="password" placeholder="Contraseña (mínimo 6)">
+      <button id="btnRegistro">Registrarme</button>
+      <p id="msg"></p>
+      <a href="index.html">Ya tengo cuenta</a>
+    </main>
+    
+    <script src="config.js"></script>
+    <script src="registro.js"></script>
+    <script src="verpass.js"></script>
+  </body>
+</html>

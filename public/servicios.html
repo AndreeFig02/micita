@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MiCita - Servicios</title>
+  <link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+  <main class="caja">
+    <h1>Servicios</h1>
+    <p id="msg"></p>
+    <div id="lista"></div>
+
+    <section id="admin">
+      <h3 id="tituloForm">Agregar servicio</h3>
+      <input id="sNombre" placeholder="Nombre del servicio">
+      <select id="sCategoria">
+        <option value="unas">Uñas</option>
+        <option value="cabello">Cabello</option>
+        <option value="otro">Otro</option>
+      </select>
+      <input id="sCategoriaOtro" placeholder="Escribí la categoría (ej: Cejas)" style="display:none" maxlength="40">
+      <input id="sDuracion" type="number" placeholder="Duración (minutos)">
+      <input id="sPrecio" type="number" placeholder="Precio">
+      <button id="btnAgregar">Guardar</button>
+      <button id="btnCancelar" class="sec" style="display:none">Cancelar edición</button>
+      <p id="msg"></p>
+    </section>
+
+    <button id="btnSalir">Cerrar sesión</button>
+  </main>
+  
+  <script src="config.js"></script>
+  <script src="servicios.js"></script>
+  <script src="menu.js"></script>
+
+</body>
+</html>
