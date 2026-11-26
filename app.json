@@ -1,0 +1,13 @@
+{
+  "expo": {
+    "name": "MiCita",
+    "slug": "micita",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "android": {
+      "package": "com.micita.expo",
+      "versionCode": 1
+    }
+  }
+}

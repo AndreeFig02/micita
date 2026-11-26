@@ -2,9 +2,13 @@
   "name": "micita",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "expo/AppEntry",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "expo start",
+    "android:expo": "expo start --android",
+    "build:capacitor:apk": "npx cap sync android && cd android && gradlew.bat assembleDebug",
+    "build:expo:apk": "npx eas-cli build --platform android --profile preview"
   },
   "keywords": [],
   "author": "",
@@ -13,6 +17,11 @@
   "dependencies": {
     "@capacitor/android": "^8.6.2",
     "@capacitor/cli": "^8.6.2",
-    "@capacitor/core": "^8.6.2"
+    "@capacitor/core": "^8.6.2",
+    "expo": "~58.0.26",
+    "expo-status-bar": "~58.0.5",
+    "react": "19.3.1",
+    "react-native": "0.88.1",
+    "react-native-webview": "14.0.1"
   }
 }
