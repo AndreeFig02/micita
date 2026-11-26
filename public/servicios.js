@@ -92,7 +92,7 @@ async function cargar() {
       return;
     }
 
-    // Agrupar por categoría (un bloque por categoría)
+    // Agrupar por categoría
     const grupos = {};
     servicios.forEach(s => {
       (grupos[s.categoria] = grupos[s.categoria] || []).push(s);
@@ -132,6 +132,7 @@ async function cargar() {
         fijarBloque(bloque, abrir);
         catAbierta = abrir ? cat : null;
       };
+
       cab.addEventListener('click', alternar);
       cab.addEventListener('keydown', e => {
         if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); alternar(); }

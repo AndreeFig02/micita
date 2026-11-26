@@ -27,7 +27,7 @@ function mananaISO() {
   return iso(m);
 }
 
-// "Hoy · miércoles 25/11", "Mañana · jueves 26/11" o "Viernes 27/11"
+// Fechas actuales
 function etiquetaDia(f) {
   const [a, m, d] = f.split('-').map(Number);
   const dt = new Date(a, m - 1, d);
@@ -38,7 +38,7 @@ function etiquetaDia(f) {
   return txt.charAt(0).toUpperCase() + txt.slice(1);
 }
 
-// Resalta el filtro activo (Próximos / Hoy / Mañana)
+// Resalta el filtro de los turnos
 function marcarFiltro() {
   document.getElementById('btnTodos').classList.toggle('activo', fecha.value === '');
   document.getElementById('btnHoy').classList.toggle('activo', fecha.value === iso(new Date()));
@@ -61,6 +61,7 @@ function tarjetaTurno(x) {
           ${enviado ? '<div class="enviado">✔ Recordatorio enviado</div>' : ''}
         </div>
       </div>
+      
       <div class="acciones">
         ${tel
           ? `<a class="btn-wa" href="https://wa.me/${tel}?text=${encodeURIComponent(texto)}" target="_blank" onclick="marcar(${x.id})">${ICO_WA} ${enviado ? 'Reenviar' : 'Enviar recordatorio'}</a>`
@@ -89,7 +90,7 @@ async function cargar() {
       return;
     }
 
-    // Agrupar por día (la API ya devuelve los turnos ordenados)
+    // Agrupar por día
     const dias = [];
     t.forEach(x => {
       let g = dias[dias.length - 1];
